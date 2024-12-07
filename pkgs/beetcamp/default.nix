@@ -14,17 +14,15 @@ python3.pkgs.buildPythonApplication rec {
 
   build-system = [ python3.pkgs.poetry-core ];
 
-  nativeBuildInputs = with pkgs; [ beets ];
-
   dependencies = with python3.pkgs; [
-    pkgs.beets-unstable
+    pkgs.beets
     httpx
     ordered-set
     packaging
     pycountry
   ];
 
-  pythonImportsCheck = [ "beetcamp" ];
+  pythonImportsCheck = [ "beetsplug.bandcamp" ];
 
   meta = {
     description = "Bandcamp autotagger source for beets (https://beets.io";
