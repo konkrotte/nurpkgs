@@ -18,13 +18,9 @@ python3.pkgs.buildPythonApplication rec {
     HOME=$PWD
   '';
 
-  dependencies = with python3.pkgs; [
-    pkgs.beets
-    httpx
-    ordered-set
-    packaging
-    pycountry
-  ];
+  nativeBuildInputs = [ pkgs.beets ];
+
+  dependencies = with python3.pkgs; [ httpx ordered-set packaging pycountry ];
 
   pythonImportsCheck = [ "beetsplug.bandcamp" ];
 
