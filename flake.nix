@@ -1,22 +1,19 @@
 {
   description = "My personal NUR repository";
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-  outputs = { self, nixpkgs }:
-    let
-      systems = [
-        "x86_64-linux"
-        "i686-linux"
-        "x86_64-darwin"
-        "aarch64-linux"
-        "armv6l-linux"
-        "armv7l-linux"
-      ];
-      forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f system);
+  inputs.systems.url = "github:nix-systems/default";
+  outputs = { self, systems, nixpkgs }:
+    let eachSystem = nixpkgs.lib.genAttrs (import systems);
+
     in {
-      legacyPackages = forAllSystems (system:
+      legacyPackages = eachSystem (system:
         import ./default.nix { pkgs = import nixpkgs { inherit system; }; });
-      packages = forAllSystems (system:
-        nixpkgs.lib.filterAttrs (_: v: nixpkgs.lib.isDerivation v)
-        self.legacyPackages.${system});
+      packages = eachSystem (system:
+        let pkgs = self.legacyPackages.${system};
+        in {
+          default =
+            pkgs.beetcamp; # Replace 'hello' with your actual default package
+          inherit (pkgs) beetcamp; # Add other packages you want to expose
+        });
     };
 }

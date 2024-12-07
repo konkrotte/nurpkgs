@@ -15,6 +15,7 @@
   overlays = import ./overlays; # nixpkgs overlays
 
   dlb-mp4base = pkgs.callPackage ./pkgs/dlb-mp4base { };
+  beetcamp = pkgs.callPackage ./pkgs/beetcamp { };
   # some-qt5-package = pkgs.libsForQt5.callPackage ./pkgs/some-qt5-package { };
   # ...
 }
