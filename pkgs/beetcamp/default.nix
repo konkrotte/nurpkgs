@@ -14,6 +14,10 @@ python3.pkgs.buildPythonApplication rec {
 
   build-system = [ python3.pkgs.poetry-core ];
 
+  preBuild = ''
+    HOME=$PWD
+  '';
+
   dependencies = with python3.pkgs; [
     pkgs.beets
     httpx
