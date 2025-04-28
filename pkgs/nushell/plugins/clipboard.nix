@@ -1,10 +1,11 @@
 {
-  stdenv,
   lib,
   rustPlatform,
-  pkg-config,
-  nix-update-script,
   fetchFromGitHub,
+  pkg-config,
+  stdenv,
+  darwin,
+  wayland,
 }:
 
 rustPlatform.buildRustPackage rec {
@@ -12,25 +13,34 @@ rustPlatform.buildRustPackage rec {
   version = "0.101.0";
 
   src = fetchFromGitHub {
-    repo = "nu_plugin_clipboard";
     owner = "FMotalleb";
-    rev = "${version}";
+    repo = "nu_plugin_clipboard";
+    rev = version;
     hash = "sha256-qS8dOtOLq8grhmori9w1d/zrhu1X3Qk51y+v/LTAxO8=";
   };
-  useFetchCargoVendor = true;
-  cargoHash = "sha256-qv9lk7tR+XLwmRNxiw7I6NB2InZc5aM63EZMSBiUqr8=";
 
-  nativeBuildInputs = [ pkg-config ] ++ lib.optionals stdenv.cc.isClang [ rustPlatform.bindgenHook ];
-  cargoBuildFlags = [ "--package nu_plugin_clipboard" ];
+  cargoHash = "sha256-JO5Ye08AvMIGS3rSY/hGHKH+7BymmGbhZwCnnJeFdFo=";
 
-  passthru.updateScript = nix-update-script { };
+  nativeBuildInputs = [
+    pkg-config
+    rustPlatform.bindgenHook
+  ];
 
-  meta = with lib; {
-    description = "A nushell plugin to copy text into clipboard or get text from it.";
-    mainProgram = "nu_plugin_clipboard";
+  buildInputs =
+    lib.optionals stdenv.isDarwin [
+      darwin.apple_sdk.frameworks.AppKit
+      darwin.apple_sdk.frameworks.CoreFoundation
+      darwin.apple_sdk.frameworks.IOKit
+    ]
+    ++ lib.optionals stdenv.isLinux [
+      wayland
+    ];
+
+  meta = {
+    description = "A nushell plugin to copy text into clipboard or get text from it. supports json<->object/table conversion out of box";
     homepage = "https://github.com/FMotalleb/nu_plugin_clipboard";
-    license = licenses.mit;
+    license = lib.licenses.mit;
     maintainers = [ ];
-    platforms = with platforms; all;
+    mainProgram = "nu_plugin_clipboard";
   };
 }
