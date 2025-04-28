@@ -6,7 +6,9 @@
 # commands such as:
 #     nix-build -A mypackage
 
-{ pkgs ? import <nixpkgs> { } }:
+{
+  pkgs ? import <nixpkgs> { },
+}:
 
 {
   # The `lib`, `modules`, and `overlays` names are special
@@ -14,8 +16,13 @@
   modules = import ./modules; # NixOS modules
   overlays = import ./overlays; # nixpkgs overlays
 
-  #dlb-mp4base = pkgs.callPackage ./pkgs/dlb-mp4base { };
+  # FIXME: fails to build
+  # dlb-mp4base = pkgs.callPackage ./pkgs/dlb-mp4base { };
   beetcamp = pkgs.callPackage ./pkgs/beetcamp { };
+  nushellPlugins = import ./pkgs/nushell/plugins {
+    inherit (pkgs) lib newScope;
+    config = { }; # Empty config as it's required by the function
+  };
   # some-qt5-package = pkgs.libsForQt5.callPackage ./pkgs/some-qt5-package { };
   # ...
 }
