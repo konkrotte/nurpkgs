@@ -6,38 +6,31 @@
   bzip2,
   xz,
   zstd,
-  stdenv,
-  darwin,
 }:
 
 rustPlatform.buildRustPackage rec {
   pname = "nushell_plugin_compress";
-  version = "0.2.5";
+  version = "0.2.10";
 
   src = fetchFromGitHub {
     owner = "yybit";
     repo = "nu_plugin_compress";
-    rev = version;
-    hash = "sha256-sm26bkBgZqPWaCUJxQqKiA8M/eROh6sCnIRrgxbJPTo=";
+    rev = "30cf23253a7e47b9996445f8390be5c069707263";
+    hash = "sha256-PiPlP5AkxP5IkVVY+3qQHnGqhcXraCNkohSkvKIBqW8=";
   };
 
-  cargoHash = "sha256-4M+wGEnRGsvk2S8Dt3fqjDM3jkNfj0mnQTTcWs6oJ/4=";
+  cargoHash = "sha256-96ojxb1hb8WaEtuDTHiGNOCYGJgDiCoYys/NDQlIdwc=";
 
   nativeBuildInputs = [
     pkg-config
     rustPlatform.bindgenHook
   ];
 
-  buildInputs =
-    [
-      bzip2
-      xz
-      zstd
-    ]
-    ++ lib.optionals stdenv.isDarwin [
-      darwin.apple_sdk.frameworks.CoreFoundation
-      darwin.apple_sdk.frameworks.IOKit
-    ];
+  buildInputs = [
+    bzip2
+    xz
+    zstd
+  ];
 
   env = {
     ZSTD_SYS_USE_PKG_CONFIG = true;

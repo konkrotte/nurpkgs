@@ -5,19 +5,31 @@
   pkgs,
 }:
 
+let
+  poetry-core-2 = python3.pkgs.poetry-core.overridePythonAttrs (_: rec {
+    version = "2.1.3";
+    src = fetchFromGitHub {
+      owner = "python-poetry";
+      repo = "poetry-core";
+      rev = version;
+      hash = "sha256-CgaWlqjvBTN7GuerzmO5IiEdXxYH6pmTDj9IsNJlCBE=";
+    };
+    doCheck = false;
+  });
+in
 python3.pkgs.buildPythonApplication rec {
   pname = "beetcamp";
-  version = "0.20.0";
+  version = "0.24.3";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "snejus";
     repo = "beetcamp";
     rev = version;
-    hash = "sha256-k8IbzD59PU7iSUUe4USu45fFyob8mWe0EGreWt2x6xI=";
+    hash = "sha256-kKFYuTJys4j67+cak2PDmn6z2vNzVitFXIZXy2bClY8=";
   };
 
-  build-system = [ python3.pkgs.poetry-core ];
+  build-system = [ poetry-core-2 ];
 
   preBuild = ''
     HOME=$PWD
@@ -25,12 +37,12 @@ python3.pkgs.buildPythonApplication rec {
 
   nativeBuildInputs = [ pkgs.beets ];
 
-  dependencies = with python3.pkgs; [
+  dependencies = [ pkgs.beets ] ++ (with python3.pkgs; [
     httpx
     ordered-set
     packaging
     pycountry
-  ];
+  ]);
 
   pythonImportsCheck = [ "beetsplug.bandcamp" ];
 
